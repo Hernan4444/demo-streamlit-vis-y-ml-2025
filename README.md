@@ -11,8 +11,8 @@ acuerdo a lo mostrado en clases. En particular, usaremos un dataset de Airbnb.
 4. `requirements.txt`: librerías de Python necesarias para construir el dashboard.
 5. `EntrenarPipeline.ipynb`: _notebook_ para entrenar modelo y guardarlo como un archivo.
 6. `pipeline_model.pkl`: modelo entrenado para su posterior uso.
-7. `requirements.txt`: archivo de texto con las librerías necesarias a instalar
-8. `README.md`: este archivo con el detalle de la demo.
+7. `README.md`: este archivo con el detalle de la demo.
+8. `.gitignore`: archivo de `git` para indicar qué cosas no se deben subir a un repositorio de Github.
 
 ## Cómo ejecutar
 1. Instalar librerías: `pip install -r requirements.txt`.
