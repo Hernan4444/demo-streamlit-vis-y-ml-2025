@@ -106,7 +106,9 @@ def plot_airbnb_by_superhost(df, column):
     pie = (
         alt.Chart(df)
         .mark_arc()
-        .encode(theta="count()", color=alt.Color("es_superhost:N").scale(scheme="set2"))
+        .encode(theta="count()", color=alt.Color("es_superhost:N", 
+                                                 scale=alt.Scale(scheme="set2")
+                                                ))
     ).properties(height=300)
 
     column.altair_chart(pie)
