@@ -13,11 +13,12 @@ def number_to_text(x):
 
 
 def text_to_number(x):
-    return 1 if x == "Si" else "0"
+    return 1 if x == "Si" else 0
 
 
 @st.cache_data
 def load_data(data_path):
+    print("Cargando datos")
     df = pd.read_csv(data_path)
     df.es_superhost = df.es_superhost.map(number_to_text)
     df.servicio_aire_acondicionado = df.servicio_aire_acondicionado.map(number_to_text)
@@ -30,21 +31,34 @@ def load_pipeline():
 
 
 def add_title_and_description():
-    st.title("Airbnb")
+    """
+    Añadir textos iniciales a la demo
+    """
+    st.title("Airbnb Demo")
     st.write(
         "Este dashboard muestra información sobre diferentes Airbnb en 10 ciudades."
     )
 
 
 def show_airbnb_dataframe(df):
+    """
+    Mostrar dataframe
+    """
     st.write("Ver datos")
     capacidad_slider = st.slider(
-        "Capacidad", min_value=0, max_value=16, value=16, step=1
+        "Capacidad", min_value=0, max_value=17, value=2, step=1
     )
-    st.write(df[df.capacidad >= capacidad_slider])
+    filtrado = df[df.capacidad >= capacidad_slider]
+    if len(filtrado) > 0:
+        st.write(filtrado)
+    else:
+        st.write("Te quedaste sin datos :c")
 
 
 def country_filter(df):
+    """
+    Filtrar dataset
+    """
     st.subheader("Filtrar por país")
     opciones = ["Todos"] + list(df["pais"].unique())
     option_box = st.selectbox("Selecciona un pais", opciones)
@@ -55,6 +69,9 @@ def country_filter(df):
 
 
 def show_airbnb_in_map(df, is_all_data):
+    """
+    Mapa de los airbnb
+    """
     st.subheader("Mapa de todos los Airbnb")
     positions = df[["latitud", "longitud"]]
     if is_all_data:
@@ -83,7 +100,11 @@ def show_airbnb_in_map(df, is_all_data):
 
 
 def plot_days_of_week(df, column):
+    """
+    Visualizaciones con altair
+    """
     column.subheader("Anfitriones por tiempo de respuesta")
+
     grupo_contado = (
         df.groupby("tiempo_respuesta")["anfitrión/a"]
         .nunique()  # Cuantos datos hay sin considerar repetidos
@@ -98,24 +119,31 @@ def plot_days_of_week(df, column):
             y=alt.Y("tiempo_respuesta:N", axis=alt.Axis(labelLimit=200)),
         )
     ).properties(height=300)
+
     column.altair_chart(tiempo_respuesta, use_container_width=True)
 
 
 def plot_airbnb_by_superhost(df, column):
+    """
+    Visualizaciones con altair
+    """
     column.subheader("Airbnb por superhost")
     pie = (
         alt.Chart(df)
         .mark_arc()
-        .encode(theta="count()", color=alt.Color("es_superhost:N", 
-                                                 scale=alt.Scale(scheme="set2")
-                                                ))
+        .encode(
+            theta="count()",
+            color=alt.Color("es_superhost:N", scale=alt.Scale(scheme="set2")),
+        )
     ).properties(height=300)
 
     column.altair_chart(pie)
 
 
 def interactive_view(df):
-
+    """
+    Visualizaciones interactivas con altair
+    """
     st.subheader("Propiedad y servicio de aire acondicionado")
     selection = alt.selection_point(
         fields=["servicio_aire_acondicionado"], bind="legend"
@@ -148,10 +176,14 @@ def interactive_view(df):
         .transform_filter(selection)
         .properties(height=300, width=200)
     )
-    st.altair_chart(bar | pie)
+    juntos = bar | pie
+    st.altair_chart(juntos)
 
 
 def predict(pipeline_loaded, info):
+    """
+    Predecir dato
+    """
     # Dar las columnas como corresponde
     columns = [
         "tiempo_respuesta",
@@ -167,7 +199,7 @@ def predict(pipeline_loaded, info):
     # Construir DataFrame con los datos y columnas
     df_test = pd.DataFrame([info], columns=columns)
 
-    # Clasificar obtienendo la probabilidad por clase
+    # Clasificar obteniendo la probabilidad por clase
     predictions = pipeline_loaded.predict_proba(df_test)
     return {
         "classes": pipeline_loaded.classes_,
@@ -177,6 +209,9 @@ def predict(pipeline_loaded, info):
 
 
 def ml_zone(pipeline):
+    """
+    Sección para modelo de ML
+    """
     column_1, column_2 = st.columns(2)
 
     column_1.subheader("Datos de entrada")
@@ -184,15 +219,9 @@ def ml_zone(pipeline):
     respuesta_box = column_1.selectbox("Tiempo de respuesta", C.TIEMPO_RESPUESTA)
     superhost_box = column_1.selectbox("Es superhost", C.SI_NO)
     propiedad_box = column_1.selectbox("Tipo Propiedad", C.TIPO_PROPIEDAD)
-    capacidad_slider = column_1.slider(
-        "Capacidad", min_value=0, max_value=16, value=5, step=1
-    )
-    comunicacion_slider = column_1.slider(
-        "Puntaje Comunicación", min_value=0, max_value=10, value=5, step=1
-    )
-    localizacion_slider = column_1.slider(
-        "Puntaje Localización", min_value=0, max_value=10, value=5, step=1
-    )
+    capacidad_slider = column_1.slider("Capacidad", min_value=0, max_value=16, value=5, step=1)
+    comunicacion_slider = column_1.slider("Puntaje Comunicación", min_value=0, max_value=10, value=5, step=1)
+    localizacion_slider = column_1.slider("Puntaje Localización", min_value=0, max_value=10, value=5, step=1)
     tv_cable_box = column_1.selectbox("Tiene TV Cable", C.SI_NO)
     aire_box = column_1.selectbox("Tiene Aire Acondicionado", C.SI_NO)
 
@@ -217,12 +246,15 @@ def ml_zone(pipeline):
 
 
 if __name__ == "__main__":
+    print("Cargando streamlit")
     df = load_data("Airbnb_Locations.csv")
 
     # Textos y filtros
     add_title_and_description()
     show_airbnb_dataframe(df)
+
     filtered_df = country_filter(df)
+    st.write(filtered_df)
 
     # Gráficos
     show_airbnb_in_map(filtered_df, filtered_df.shape == df.shape)

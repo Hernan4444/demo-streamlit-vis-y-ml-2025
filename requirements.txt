@@ -1,8 +1,10 @@
+bokeh
 streamlit-ace
 streamlit-metrics
+plotly
+cufflinks
 nltk
 matplotlib
 streamlit-folium
 joblib
-altair
 scikit-learn
