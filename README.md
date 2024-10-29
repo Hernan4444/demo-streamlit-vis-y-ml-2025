@@ -1,7 +1,6 @@
 # Demo Streamlit - Visualización y ML
 
-El código de este directorio está pensado para enseñar las funcionalidades básicas de Streamlit de
-acuerdo a lo mostrado en clases. En particular, usaremos un dataset de Airbnb.
+El código de este directorio está pensado para poner en práctica las funcionalidades básicas de Streamlit de acuerdo a lo mostrado en clases. En particular, usaremos un _dataset_ de Airbnb.
 
 ## Estructura de archivos
 
@@ -17,3 +16,4 @@ acuerdo a lo mostrado en clases. En particular, usaremos un dataset de Airbnb.
 ## Cómo ejecutar
 1. Instalar librerías: `pip install -r requirements.txt`.
 2. Ejecutar: `streamlit run app.py`
+
