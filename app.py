@@ -25,7 +25,7 @@ def load_data(data_path):
     return df
 
 
-@st.cache_data
+@st.cache_resource
 def load_pipeline():
     return joblib.load("pipeline_model.pkl")
 
